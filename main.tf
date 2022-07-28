@@ -120,7 +120,6 @@ resource "aws_instance" "armada_boastswain_ec2" {
   instance_type = var.boastswain_instance_type
   key_name      = "armada-of-the-damned-kp"
   user_data     = file("armada-boastswain-bootstrap.sh")
-  subnet_id     = aws_subnet.armada_of_the_damned_subnet.id
 
   network_interface {
     network_interface_id = aws_network_interface.armada_boastswain_iface.id
