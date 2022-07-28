@@ -61,10 +61,9 @@ resource "aws_route_table_association" "a" {
     ]  
 }
 
-# Establish the BotNet Controller For The Administrator
-resource "aws_security_group" "armada_boastswain_sg" {
-  name        = "armada_boastswain_sg"
-  description = "Allow All Traffic From The Armada Captain(s)"
+resource "aws_security_group" "armada_of_the_damned_sg" {
+  name        = "armada_of_the_damned__sg"
+  description = "Allow All Traffic"
   vpc_id      = aws_vpc.armada_of_the_damned_vpc.id
 
   ingress {
@@ -92,14 +91,15 @@ resource "aws_security_group" "armada_boastswain_sg" {
   }
 }
 
+# Establish the BotNet Controller For The Administrator
 resource "aws_network_interface" "armada_boastswain_iface" {
   subnet_id   = aws_subnet.armada_of_the_damned_subnet.id
-  security_groups = [aws_security_group.armada_boastswain_sg.id]
+  security_groups = [aws_security_group.armada_of_the_damned_sg.id]
 
     depends_on = [
         aws_vpc.armada_of_the_damned_vpc,
         aws_subnet.armada_of_the_damned_subnet,
-        aws_security_group.armada_boastswain_sg
+        aws_security_group.armada_of_the_damned_sg
     ]
 
   tags = {
@@ -121,10 +121,6 @@ resource "aws_instance" "armada_boastswain_ec2" {
 
     availability_zone = "us-east-1a"
 
-    provisioner "local-exec" {
-        command = ""
-    }
-
     depends_on = [
         aws_network_interface.armada_boastswain
     ] 
@@ -134,4 +130,31 @@ resource "aws_instance" "armada_boastswain_ec2" {
     }
 }
 
+# Establish the BotNet Zombies For The Administrator
 
+resource "aws_instance" "armada_swine_ec2s" {
+    count                  = var.swine_count
+    ami                    = "ami-0cff7528ff583bf9a"
+    instance_type          = "t2.micro"
+    description            = join("-", ["swine", random_string.random[count.index].result])
+    key_name               = "armada-of-the-damned-kp"
+    user_data              = file("armada-swine-bootstrap.sh")
+
+    network_interface {
+        subnet_id   = aws_subnet.armada_of_the_damned_subnet.id
+        security_groups = [aws_security_group.armada_of_the_damned_sg.id]
+        device_index         = 0
+    }
+
+    availability_zone = "us-east-1a"
+
+    depends_on = [
+        aws_vpc.armada_of_the_damned_vpc,
+        aws_subnet.armada_of_the_damned_subnet,
+        aws_security_group.armada_of_the_damned_sg
+    ] 
+
+    tags = {
+        Project = "armada-of-the-damned"
+    }
+}
