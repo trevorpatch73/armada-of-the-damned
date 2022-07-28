@@ -142,5 +142,25 @@ resource "aws_instance" "armada_swine_ec2" {
   }
 }
 
+# Establish the Web Server To Attack
+resource "aws_instance" "armada_booty_ec2" {
+  ami             = lookup(var.ami, var.aws_region)
+  instance_type   = var.swine_instance_type
+  key_name        = "armada-of-the-damned-kp"
+  user_data       = file("armada-booty-bootstrap.sh")
+  subnet_id       = aws_subnet.armada_of_the_damned_subnet.id
+  security_groups = [aws_security_group.armada_of_the_damned_sg.id]
+
+  depends_on = [
+    aws_vpc.armada_of_the_damned_vpc,
+    aws_subnet.armada_of_the_damned_subnet,
+    aws_security_group.armada_of_the_damned_sg
+  ]
+
+  tags = {
+    Project = "armada-of-the-damned"
+    Name    = "armada_booty_ec2"
+  }
+}
 
 
