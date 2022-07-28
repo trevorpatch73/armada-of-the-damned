@@ -1,3 +1,14 @@
+# Set Terraform Cloud Environment
+terraform {
+  cloud {
+    organization = "tpatch"
+
+    workspaces {
+      name = "armada-of-the-damned"
+    }
+  }
+}
+
 # Variables Inherited From Terraform Cloud
 variable "aws_key_id" {
   type = string
