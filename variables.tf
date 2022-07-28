@@ -1,9 +1,9 @@
 # Variables Inherited From Terraform Cloud
-variable "AWS_ACCESS_KEY_ID" {
+variable "aws_key_id" {
   type = string
 }
 
-variable "AWS_SECRET_ACCESS_KEY" {
+variable "aws_key_value" {
   type = string
 }
 
@@ -40,5 +40,3 @@ variable "ami" {
     "us-west-2" = "ami-098e42ae54c764c35"
   }
 }
-
-
