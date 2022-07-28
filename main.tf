@@ -1,4 +1,4 @@
-# Random Generator
+# Random Generator for Uneeknuss
 resource "random_string" "random" {
   count   = var.swine_count
   length  = 4
@@ -132,25 +132,29 @@ resource "aws_instance" "armada_boastswain_ec2" {
 
   tags = {
     Project = "armada-of-the-damned"
+    Name    = "armada_boastswain_ec2"
   }
 }
 
 # Establish the BotNet Zombies For The Administrator
 resource "aws_instance" "armada_swine_ec2" {
-  count         = var.swine_count
-  ami           = lookup(var.ami, var.aws_region)
-  instance_type = var.swine_instance_type
-  key_name      = "armada-of-the-damned-kp"
-  user_data     = file("armada-swine-bootstrap.sh")
-  subnet_id     = aws_subnet.armada_of_the_damned_subnet.id
+  count           = var.swine_count
+  ami             = lookup(var.ami, var.aws_region)
+  instance_type   = var.swine_instance_type
+  key_name        = "armada-of-the-damned-kp"
+  user_data       = file("armada-swine-bootstrap.sh")
+  subnet_id       = aws_subnet.armada_of_the_damned_subnet.id
+  security_groups = [aws_security_group.armada_of_the_damned_sg.id]
 
   depends_on = [
     aws_vpc.armada_of_the_damned_vpc,
     aws_subnet.armada_of_the_damned_subnet,
-    aws_security_group.armada_of_the_damned_sg
+    aws_security_group.armada_of_the_damned_sg,
+    random_string.random
   ]
 
   tags = {
     Project = "armada-of-the-damned"
+    Name    = [join("-", ["swine", random_string.random[count.index].result])]
   }
 }
