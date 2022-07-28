@@ -1,4 +1,5 @@
 #! /bin/bash
+cd home/ec2-user/
 sudo yum -y update
 sudo yum -y install python
 sudo yum -y install python37
