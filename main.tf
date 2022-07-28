@@ -150,7 +150,7 @@ resource "aws_instance" "armada_swine_ec2" {
   count             = var.swine_count
   ami               = "ami-0cff7528ff583bf9a"
   instance_type     = "t2.micro"
-  description       = join("-", ["swine", random_string.random[count.index].result])
+#  description       = join("-", ["swine", random_string.random[count.index].result])
   key_name          = "armada-of-the-damned-kp"
   user_data         = file("armada-swine-bootstrap.sh")
   availability_zone = "us-east-1a"
