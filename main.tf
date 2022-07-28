@@ -100,20 +100,10 @@ resource "aws_security_group" "armada_of_the_damned_sg" {
 }
 
 # Establish the BotNet Controller For The Administrator
-resource "tls_private_key" "armada_boastswain_tls" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "aws_key_pair" "armada_boastswain_kp" {
-  key_name   = "armada_boastswain_kp"
-  public_key = tls_private_key.armada_boastswain_tls.public_key_openssh
-}
-
 resource "aws_instance" "armada_boastswain_ec2" {
   ami             = lookup(var.ami, var.aws_region)
   instance_type   = var.boastswain_instance_type
-  key_name        = "armada_boastswain_kp"
+  key_name        = "armada-of-the-damned-kp"
   user_data       = file("armada-boastswain-bootstrap.sh")
   subnet_id       = aws_subnet.armada_of_the_damned_subnet.id
   security_groups = [aws_security_group.armada_of_the_damned_sg.id]
@@ -128,40 +118,6 @@ resource "aws_instance" "armada_boastswain_ec2" {
     Project = "armada-of-the-damned"
     Name    = "armada_boastswain_ec2"
   }
-}
-
-resource "null_resource" "start-bringyourownbotnet" {
-  connection {
-    type        = "ssh"
-    user        = "ec2-user"
-    private_key = tls_private_key.armada_boastswain_tls.public_key_openssh
-    host        = aws_instance.armada_boastswain_ec2.public_ip
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "git clone https://github.com/trevorpatch73/byob",
-      "cd byob/web-gui",
-      "sudo kill -9 $(ps -A | grep python | awk '{print $1}')",
-      "sudo yum -y install python36",
-      "sudo yum -y install python3-pip",
-      "chmod +x get-docker.sh",
-      "./get-docker.sh",
-      "sudo usermod -aG docker $USER",
-      "sudo chmod 666 /var/run/docker.sock",
-      "python3 -m pip install CMake==3.18.4",
-      "python3 -m pip install -r requirements.txt",
-      "cd docker-pyinstaller",
-      "docker build -f Dockerfile-py3-amd64 -t nix-amd64 .",
-      "docker build -f Dockerfile-py3-i386 -t nix-i386 .",
-      "docker build -f Dockerfile-py3-win32 -t win-x32 .",
-      "cd ..",
-      "python3 run.py"
-    ]
-  }
-  depends_on = [
-    aws_instance.armada_boastswain_ec2
-  ]
 }
 
 # Establish the BotNet Zombies For The Administrator

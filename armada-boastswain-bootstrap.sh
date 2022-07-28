@@ -49,4 +49,17 @@ cd byob/web-gui
 sudo kill -9 $(ps -A | grep python | awk '{print $1}')
 sudo ./startup.sh
 n
-
+sudo yum -y install python36
+sudo yum -y install python3-pip
+chmod +x get-docker.sh
+./get-docker.sh
+sudo usermod -aG docker $USER
+sudo chmod 666 /var/run/docker.sock
+python3 -m pip install CMake==3.18.4
+python3 -m pip install -r requirements.txt
+cd docker-pyinstaller
+docker build -f Dockerfile-py3-amd64 -t nix-amd64 .
+docker build -f Dockerfile-py3-i386 -t nix-i386 .
+docker build -f Dockerfile-py3-win32 -t win-x32 .
+cd ..
+python3 run.py
