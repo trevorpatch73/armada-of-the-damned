@@ -10,4 +10,4 @@ sudo yum install -y httpd
 sudo systemctl start httpd
 sudo systemctl enable httpd
 sudo usermod -a -G apache ec2-user
-echo "<h1>THE ARMADA OF THE DAMNED SUCKS!!!!!!!</h1>" | sudo tee /var/www/html/index.html
+echo "<h1>THE ARMADA OF THE DAMNED SUCKS</h1>" | sudo tee /var/www/html/index.html
