@@ -132,6 +132,7 @@ resource "aws_instance" "armada_boastswain_ec2" {
 
 # Establish the BotNet Zombies For The Administrator
 resource "aws_network_interface" "armada_swine_iface" {
+    count = 2
   subnet_id       = aws_subnet.armada_of_the_damned_subnet.id
   security_groups = [aws_security_group.armada_of_the_damned_sg.id]
 
