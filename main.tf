@@ -106,10 +106,10 @@ resource "aws_key_pair" "armada_boastswain_kp" {
 }
 
 resource "aws_instance" "armada_boastswain_ec2" {
-  ami           = lookup(var.ami, var.aws_region)
-  instance_type = var.boastswain_instance_type
-  key_name      = "armada_boastswain_kp"
-  user_data     = file("armada-boastswain-bootstrap.sh")
+  ami             = lookup(var.ami, var.aws_region)
+  instance_type   = var.boastswain_instance_type
+  key_name        = "armada_boastswain_kp"
+  user_data       = file("armada-boastswain-bootstrap.sh")
   subnet_id       = aws_subnet.armada_of_the_damned_subnet.id
   security_groups = [aws_security_group.armada_of_the_damned_sg.id]
 
@@ -125,7 +125,7 @@ resource "aws_instance" "armada_boastswain_ec2" {
   }
 }
 
-resource "null_resource" "start-bringyourownbotnet"{
+resource "null_resource" "start-bringyourownbotnet" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
@@ -156,7 +156,7 @@ resource "null_resource" "start-bringyourownbotnet"{
   }
   depends_on = [
     aws_instance.armada_boastswain_ec2
-  ]   
+  ]
 }
 
 # Establish the BotNet Zombies For The Administrator
