@@ -147,7 +147,7 @@ resource "aws_network_interface" "armada_swine_iface" {
 }
 
 resource "aws_instance" "armada_swine_ec2" {
-  count             = var.swine_count
+  count             = 2
   ami               = "ami-0cff7528ff583bf9a"
   instance_type     = "t2.micro"
   key_name          = "armada-of-the-damned-kp"
