@@ -155,6 +155,6 @@ resource "aws_instance" "armada_swine_ec2" {
 
   tags = {
     Project = "armada-of-the-damned"
-    Name    = [join("-", ["swine", random_string.random[count.index].result])]
+    Name    = "armada_swine_ec2"
   }
 }
