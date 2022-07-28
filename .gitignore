@@ -5,6 +5,8 @@
 
 # Terraform State Files
 .DS_Store
+.terraform
+.terraform.*
 
 # User-specific files
 *.rsuser

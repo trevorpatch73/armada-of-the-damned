@@ -1,3 +1,11 @@
+# Random Generator
+resource "random_string" "random" {
+  count   = var.swine_count
+  length  = 4
+  special = false
+  upper   = false
+}
+
 # Establish the network infrastructure
 resource "aws_vpc" "armada_of_the_damned_vpc" {
   cidr_block = "30.0.0.0/24"
@@ -108,18 +116,16 @@ resource "aws_network_interface" "armada_boastswain_iface" {
 }
 
 resource "aws_instance" "armada_boastswain_ec2" {
-  ami           = "ami-0cff7528ff583bf9a"
-  instance_type = "t2.micro"
-  description   = "armada_boastswain"
+  ami           = lookup(var.ami, var.aws_region)
+  instance_type = var.boastswain_instance_type
   key_name      = "armada-of-the-damned-kp"
   user_data     = file("armada-boastswain-bootstrap.sh")
+  subnet_id     = aws_subnet.armada_of_the_damned_subnet.id
 
   network_interface {
-    network_interface_id = aws_network_interface.armada_boastswain.id
+    network_interface_id = aws_network_interface.armada_boastswain_iface.id
     device_index         = 0
   }
-
-  availability_zone = "us-east-1a"
 
   depends_on = [
     aws_network_interface.armada_boastswain_iface
@@ -131,10 +137,13 @@ resource "aws_instance" "armada_boastswain_ec2" {
 }
 
 # Establish the BotNet Zombies For The Administrator
-resource "aws_network_interface" "armada_swine_iface" {
-  count           = 2
-  subnet_id       = data.aws_subnet.armada_of_the_damned_subnet.id
-  security_groups = data.aws_security_group.armada_of_the_damned_sg.id
+resource "aws_instance" "armada_swine_ec2" {
+  count         = var.swine_count
+  ami           = lookup(var.ami, var.aws_region)
+  instance_type = var.swine_instance_type
+  key_name      = "armada-of-the-damned-kp"
+  user_data     = file("armada-swine-bootstrap.sh")
+  subnet_id     = aws_subnet.armada_of_the_damned_subnet.id
 
   depends_on = [
     aws_vpc.armada_of_the_damned_vpc,
@@ -145,28 +154,4 @@ resource "aws_network_interface" "armada_swine_iface" {
   tags = {
     Project = "armada-of-the-damned"
   }
-}
-
-resource "aws_instance" "armada_swine_ec2" {
-  count             = 2
-  ami               = "ami-0cff7528ff583bf9a"
-  instance_type     = "t2.micro"
-  key_name          = "armada-of-the-damned-kp"
-  user_data         = file("armada-swine-bootstrap.sh")
-  availability_zone = "us-east-1a"
-  subnet_id         = data.aws_subnet.armada_of_the_damned_subnet.id
-
-  depends_on = [
-    aws_network_interface.armada_swine_iface
-  ]
-
-  tags = {
-    Project = "armada-of-the-damned"
-  }
-}
-
-resource "aws_network_interface_attachment" "armada_swine_netattach" {
-  instance_id          = element(aws_instance.armada_swine_ec2.*.id, count.index)
-  network_interface_id = element(aws_network_interface.armada_swine_iface.*.id, count.index)
-  device_index         = count.index + 1
 }
