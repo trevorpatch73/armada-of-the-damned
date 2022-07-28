@@ -133,8 +133,8 @@ resource "aws_instance" "armada_boastswain_ec2" {
 # Establish the BotNet Zombies For The Administrator
 resource "aws_network_interface" "armada_swine_iface" {
   count           = 2
-  subnet_id       = aws_subnet.armada_of_the_damned_subnet.id
-  security_groups = [aws_security_group.armada_of_the_damned_sg.id]
+  subnet_id       = "${data.aws_subnet.armada_of_the_damned_subnet.id}"
+  security_groups = "${data.aws_security_group.armada_of_the_damned_sg.id}"
 
   depends_on = [
     aws_vpc.armada_of_the_damned_vpc,
@@ -154,7 +154,7 @@ resource "aws_instance" "armada_swine_ec2" {
   key_name          = "armada-of-the-damned-kp"
   user_data         = file("armada-swine-bootstrap.sh")
   availability_zone = "us-east-1a"
-  subnet_id         = aws_subnet.armada_of_the_damned_subnet.id
+  subnet_id         = "${data.aws_subnet.armada_of_the_damned_subnet.id}"
 
   depends_on = [
     aws_network_interface.armada_swine_iface
