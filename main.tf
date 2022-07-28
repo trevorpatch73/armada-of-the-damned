@@ -100,9 +100,14 @@ resource "aws_security_group" "armada_of_the_damned_sg" {
 }
 
 # Establish the BotNet Controller For The Administrator
+resource "tls_private_key" "armada_boastswain_tls" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "aws_key_pair" "armada_boastswain_kp" {
   key_name   = "armada_boastswain_kp"
-  public_key = file("~/.ssh/terraform.pub")
+  public_key = tls_private_key.armada_boastswain_tls.public_key_openssh
 }
 
 resource "aws_instance" "armada_boastswain_ec2" {
@@ -129,7 +134,7 @@ resource "null_resource" "start-bringyourownbotnet" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file("~/.ssh/terraform")
+    private_key = tls_private_key.armada_boastswain_tls.public_key_openssh
     host        = aws_instance.armada_boastswain_ec2.public_ip
   }
 
