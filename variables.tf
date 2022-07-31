@@ -37,7 +37,7 @@ variable "swine_instance_type" {
 }
 
 variable "swine_count" {
-  default = "2"
+  default = "3"
 }
 
 # Static Variables Used for Lookups
