@@ -10,3 +10,5 @@ python3 -m pip install requests
 sudo -H pip3 install requests
 python3 -m pip install numpy
 sudo -H pip3 install numpy
+sudo amazon-linux-extras install epel
+sudo yum -y install hping3
